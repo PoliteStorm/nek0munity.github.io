@@ -1,0 +1,95 @@
+/* styles.css */
+
+body {
+    background-color: black;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  h1 {
+    color: #fff;
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  .logo {
+    vertical-align: middle;
+    height: 30px;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  li {
+    margin: 10px;
+  }
+  
+  a {
+    text-decoration: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 1px solid white;
+    transition: background-color 0.3s ease;
+  }
+  
+  a:hover {
+    background-color: #555;
+  }
+  
+  a:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px white;
+  }
+  
+  .logo {
+    height: 50px;
+    width: 50px;
+    vertical-align: middle;
+  }
+  
+  .translate-button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    color: white;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    display: inline;
+    margin-right: 10px;
+  }
+  
+  .story {
+    margin-top: 30px;
+  }
+  
+  .translate-button.chinese::before {
+    content: "翻译";
+  }
+  
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 24px;
+    }
+  
+    a {
+      padding: 8px 16px;
+    }
+  }
+  
