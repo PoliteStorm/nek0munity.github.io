@@ -20,12 +20,6 @@ body {
     margin-bottom: 20px;
 }
 
-.buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
 button {
     background-color: #fff;
     color: #000;
@@ -41,6 +35,12 @@ button:hover {
     background-color: #000;
     color: #fff;
 }
+
+button:disabled {
+    background-color: #666;
+    cursor: not-allowed;
+}
+
 
 button:disabled {
     background-color: #666;
