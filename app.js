@@ -90,13 +90,28 @@ mintButton.addEventListener('click', async () => {
     }
 
     try {
-        await contract.methods.mint(1).send({
+        const mintAmount = 1;
+
+        const gasEstimate = await contract.methods.mint(mintAmount).estimateGas({
             from: accounts[0],
             value: mintCost
         });
 
-        console.log('NFTs minted successfully.');
+        const gasPrice = await web3.eth.getGasPrice();
+        const gasFee = gasEstimate * gasPrice;
+
+        const transactionParameters = {
+            from: accounts[0],
+            value: mintCost,
+            gas: gasEstimate,
+            gasPrice: gasPrice
+        };
+
+        await contract.methods.mint(mintAmount).send(transactionParameters);
+
+        console.log('NFTs minted successfully. Gas fee:', web3.utils.fromWei(gasFee.toString(), 'ether'), 'ETH');
     } catch (error) {
         console.error('Error minting NFTs:', error);
     }
 });
+
