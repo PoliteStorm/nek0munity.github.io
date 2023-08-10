@@ -38,13 +38,14 @@ body {
   border: none;
   cursor: pointer;
   border-radius: 50px; /* Rounder shape */
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
   margin: 0.5rem;
 }
 
 .button:hover {
   background-color: #333333; /* Darker shade of black */
   transform: scale(1.05); /* Slight scale-up effect on hover */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Pop effect with shadow */
 }
 
 /* Animation */
@@ -90,4 +91,3 @@ body {
 .fade-in {
   animation: fadeIn 1s ease-in-out;
 }
-
