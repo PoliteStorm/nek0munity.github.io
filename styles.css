@@ -17,7 +17,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .container {
@@ -37,13 +37,14 @@ body {
   color: var(--secondary-color);
   border: none;
   cursor: pointer;
-  border-radius: 50px; /* Rounded shape */
-  transition: background-color 0.3s ease;
+  border-radius: 50px; /* Rounder shape */
+  transition: background-color 0.3s ease, transform 0.2s ease;
   margin: 0.5rem;
 }
 
 .button:hover {
   background-color: #333333; /* Darker shade of black */
+  transform: scale(1.05); /* Slight scale-up effect on hover */
 }
 
 /* Animation */
