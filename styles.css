@@ -1,49 +1,79 @@
-/* styles.css */
+/* Apply a modern CSS reset or normalization */
+/* ... */
+
+/* Global styles */
+:root {
+  --primary-color: #000000; /* Black */
+  --secondary-color: #ffffff; /* White */
+  --font-family: 'Helvetica', sans-serif;
+}
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #000;
-    color: #fff;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+  font-family: var(--font-family);
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  margin: 0;
+  padding: 0;
 }
 
 .container {
-    text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
 }
 
-.logo {
-    width: 150px; /* Adjust width as needed */
-    margin-bottom: 20px;
+/* Header styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
 }
 
-.buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+/* Navigation styles */
+.nav {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
 }
 
-button {
-    background-color: #fff;
-    color: #000;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    margin: 10px;
-    transition: background-color 0.3s, color 0.3s;
+.nav li {
+  font-size: 1.2rem;
 }
 
-button:hover {
-    background-color: #000;
-    color: #fff;
+/* Button styles */
+.button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-button:disabled {
-    background-color: #666;
-    cursor: not-allowed;
+.button:hover {
+  background-color: #333333; /* Darker shade of black */
+}
+
+/* Content styles */
+.content {
+  padding: 2rem;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 1s ease-in-out;
 }
 
