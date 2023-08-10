@@ -5,8 +5,9 @@ let web3;
 let contract;
 let mintCost;
 
+// Replace with the ABI of your contract
 const contractAbi = [
-   {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
+    {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
         {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},
         {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},
         {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},
@@ -37,91 +38,79 @@ const contractAbi = [
         {"inputs":[],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}
 ];
 
-// Replace with your actual contract address on the Polygon network
-const contractAddress = '0xYourContractAddress';
-
-// Update the network configuration for Polygon (MATIC)
-const network = 'https://rpc-mainnet.maticvigil.com'; // Change to appropriate network URL
+// Replace with your actual contract address
+const contractAddress = '0xDf8d126474d3aFd2d8082453540014b503bf0012'; // Paste the contract address here
 
 async function init() {
-  // Initialize matic instance and contract here
-  if (window.ethereum) {
-    web3 = new Web3(window.ethereum);
-
-    const maticProvider = new matic.Matic({
-      network,
-      version: 'mumbai', // Replace with 'mainnet' for Polygon mainnet
-      parentProvider: web3.currentProvider
-    });
-
-    try {
-      await window.ethereum.enable();
-      contract = new web3.eth.Contract(contractAbi, contractAddress);
-      mintCost = await contract.methods.mintCost().call();
-      mintButton.disabled = false;
-    } catch (error) {
-      console.error('Error initializing web3 or contract:', error);
+    // Initialize web3 and contract instance here
+    if (window.ethereum) {
+        web3 = new Web3(window.ethereum);
+        try {
+            await window.ethereum.enable();
+            contract = new web3.eth.Contract(contractAbi, contractAddress);
+            mintCost = await contract.methods.mintCost().call();
+            mintButton.disabled = false;
+        } catch (error) {
+            console.error('Error initializing web3 or contract:', error);
+        }
     }
-  }
 }
 
 init();
 
 connectWalletButton.addEventListener('click', async () => {
-  if (!web3) {
-    console.log('Web3 not available.');
-    return;
-  }
-
-  try {
-    const accounts = await web3.eth.getAccounts();
-    if (accounts.length === 0) {
-      console.log('No connected accounts.');
-      return;
+    if (!web3) {
+        console.log('Web3 not available.');
+        return;
     }
 
-    console.log('Connected with address:', accounts[0]);
-  } catch (error) {
-    console.error('Error connecting wallet:', error);
-  }
+    try {
+        const accounts = await web3.eth.getAccounts();
+        if (accounts.length === 0) {
+            console.log('No connected accounts.');
+            return;
+        }
+
+        console.log('Connected with address:', accounts[0]);
+    } catch (error) {
+        console.error('Error connecting wallet:', error);
+    }
 });
 
 mintButton.addEventListener('click', async () => {
-  if (!web3 || !contract) {
-    console.log('Web3 or contract instance not available.');
-    return;
-  }
+    if (!web3 || !contract) {
+        console.log('Web3 or contract instance not available.');
+        return;
+    }
 
-  const accounts = await web3.eth.getAccounts();
-  if (accounts.length === 0) {
-    console.log('No connected accounts.');
-    return;
-  }
+    const accounts = await web3.eth.getAccounts();
+    if (accounts.length === 0) {
+        console.log('No connected accounts.');
+        return;
+    }
 
-  try {
-    const mintAmount = 1;
+    try {
+        const mintAmount = 1;
 
-    const gasEstimate = await contract.methods.mint(mintAmount).estimateGas({
-      from: accounts[0],
-      value: mintCost
-    });
+        const gasEstimate = await contract.methods.mint(mintAmount).estimateGas({
+            from: accounts[0],
+            value: mintCost
+        });
 
-    const gasPrice = await web3.eth.getGasPrice();
-    const gasFee = gasEstimate * gasPrice;
+        const gasPrice = await web3.eth.getGasPrice();
+        const gasFee = gasEstimate * gasPrice;
 
-    const transactionParameters = {
-      from: accounts[0],
-      value: mintCost,
-      gas: gasEstimate,
-      gasPrice: gasPrice
-    };
+        const transactionParameters = {
+            from: accounts[0],
+            value: mintCost,
+            gas: gasEstimate,
+            gasPrice: gasPrice
+        };
 
-    await contract.methods.mint(mintAmount).send(transactionParameters);
+        await contract.methods.mint(mintAmount).send(transactionParameters);
 
-    console.log('NFTs minted successfully. Gas fee:', web3.utils.fromWei(gasFee.toString(), 'ether'), 'ETH');
-  } catch (error) {
-    console.error('Error minting NFTs:', error);
-  }
+        console.log('NFTs minted successfully. Gas fee:', web3.utils.fromWei(gasFee.toString(), 'ether'), 'ETH');
+    } catch (error) {
+        console.error('Error minting NFTs:', error);
+    }
 });
-
-
