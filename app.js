@@ -2,7 +2,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const alchemyKey = 'BUUczsUz__eVJKDXm_c4DW5ugPSoGyhf'; // Replace with your Alchemy API key
   const web3 = new Web3(new Web3.providers.HttpProvider(alchemyKey));
 
-  const contractAbi = require('NekoFrensABI.json'); // Replace with your ABI file
+  let contractAbi = null; // Will store the loaded ABI
+
   const contractAddress = '0xDf8d126474d3aFd2d8082453540014b503bf0012'; // Replace with your contract address
 
   const nftContract = new web3.eth.Contract(contractAbi, contractAddress);
@@ -10,11 +11,22 @@ document.addEventListener("DOMContentLoaded", async () => {
   const connectWalletButton = document.getElementById('connectWalletButton');
   const mintButton = document.getElementById('mintButton');
 
+  // Load ABI file using fetch
+  fetch('NekoFrensABI.json')
+    .then(response => response.json())
+    .then(abi => {
+      contractAbi = abi;
+      initApp();
+    })
+    .catch(error => {
+      console.error('Error loading ABI:', error);
+    });
+
   let connected = false;
   let walletConnector = null;
 
-  // Initialize WalletConnect
-  const initWalletConnect = async () => {
+  // Initialize WalletConnect and the app
+  const initApp = () => {
     walletConnector = new WalletConnect({ bridge: 'https://bridge.walletconnect.org' });
 
     if (walletConnector.connected) {
@@ -26,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Connect wallet using WalletConnect
   connectWalletButton.addEventListener('click', async () => {
     if (!walletConnector) {
-      await initWalletConnect();
+      await initApp();
     }
 
     if (!walletConnector.connected) {
