@@ -11,21 +11,36 @@ document.addEventListener("DOMContentLoaded", async () => {
   const mintButton = document.getElementById('mintButton');
 
   let connected = false;
+  let walletConnector = null;
 
+  // Initialize WalletConnect
+  const initWalletConnect = async () => {
+    walletConnector = new WalletConnect({ bridge: 'https://bridge.walletconnect.org' });
+
+    if (walletConnector.connected) {
+      connected = true;
+      updateMintButtonStatus();
+    }
+  };
+
+  // Connect wallet using WalletConnect
   connectWalletButton.addEventListener('click', async () => {
-    if (window.ethereum) {
+    if (!walletConnector) {
+      await initWalletConnect();
+    }
+
+    if (!walletConnector.connected) {
       try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        await walletConnector.createSession();
         connected = true;
         updateMintButtonStatus();
       } catch (error) {
         console.error('Error connecting wallet:', error);
       }
-    } else {
-      console.error('No wallet provider available.');
     }
   });
 
+  // Mint NFTs using WalletConnect
   mintButton.addEventListener('click', async () => {
     if (connected) {
       await mintNFTs();
@@ -41,25 +56,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     const sender = accounts[0];
 
     // Estimate gas for the minting transaction
-    const gas = await nftContract.methods.mintNFTs(1).estimateGas({ from: sender });
-
-    // Send the minting transaction
     try {
-      const result = await nftContract.methods.mintNFTs(1).send({
-        from: sender,
-        gas,
-      });
+      const gas = await nftContract.methods.mintNFTs(1).estimateGas({ from: sender });
 
-      console.log('Transaction hash:', result.transactionHash);
-      console.log('Receipt:', result);
+      // Send the minting transaction
+      try {
+        const result = await walletConnector.sendTransaction({
+          from: sender,
+          to: contractAddress,
+          data: nftContract.methods.mintNFTs(1).encodeABI(),
+          gas,
+        });
 
-      // Provide user feedback that the minting was successful
-      alert('NFT minted successfully!');
+        console.log('Transaction hash:', result.transactionHash);
+        console.log('Receipt:', result);
+
+        // Provide user feedback that the minting was successful
+        alert('NFT minted successfully!');
+      } catch (error) {
+        console.error('Error minting NFTs:', error);
+        // Provide user feedback that the minting failed
+        alert('Error minting NFTs. Please try again.');
+      }
     } catch (error) {
-      console.error('Error minting NFTs:', error);
-      // Provide user feedback that the minting failed
-      alert('Error minting NFTs. Please try again.');
+      console.error('Error estimating gas:', error);
+      // Provide user feedback that the gas estimation failed
+      alert('Error estimating gas. Please try again.');
     }
   }
 });
-
