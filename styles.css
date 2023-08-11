@@ -1,93 +1,52 @@
-/* Apply a modern CSS reset or normalization */
-/* ... */
-
-/* Global styles */
-:root {
-  --primary-color: #000000; /* Black */
-  --secondary-color: #ffffff; /* White */
-  --font-family: 'Helvetica', sans-serif;
+/* Reset default margin and padding for all elements */
+body, h1, button {
+   margin: 0;
+   padding: 0;
 }
 
+/* Apply a modern font to the entire page */
 body {
-  font-family: var(--font-family);
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+   font-family: Arial, sans-serif;
 }
 
+/* Style the container */
 .container {
-  text-align: center;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   height: 100vh;
+   background-color: #000;
+   color: #fff;
 }
 
-/* Button styles */
-.button-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+/* Style the main heading */
+h1 {
+   font-size: 2.5rem;
+   margin-bottom: 20px;
 }
 
-.button {
-  padding: 0.5rem 1rem;
-  background-color: var(--primary-color);
-  color: var(--secondary-color);
-  border: none;
-  cursor: pointer;
-  border-radius: 50px; /* Rounder shape */
-  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-  margin: 0.5rem;
+/* Style the buttons */
+button {
+   background-color: #fff;
+   color: #000;
+   border: none;
+   border-radius: 5px;
+   padding: 10px 20px;
+   font-size: 1rem;
+   margin: 5px;
+   cursor: pointer;
+   transition: background-color 0.3s, color 0.3s;
 }
 
-.button:hover {
-  background-color: #333333; /* Darker shade of black */
-  transform: scale(1.05); /* Slight scale-up effect on hover */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Pop effect with shadow */
+button:hover {
+   background-color: #000;
+   color: #fff;
 }
 
-/* Animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animated-button {
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-/* Other styles (header, navigation, content, etc.) */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background-color: var(--secondary-color);
-  color: var(--primary-color);
-}
-
-.nav {
-  list-style: none;
-  display: flex;
-  gap: 1rem;
-}
-
-.nav li {
-  font-size: 1.2rem;
-}
-
-.content {
-  padding: 2rem;
-}
-
-.fade-in {
-  animation: fadeIn 1s ease-in-out;
+/* Adjust button styles for smaller screens */
+@media screen and (max-width: 600px) {
+   h1 {
+       font-size: 2rem;
+   }
 }
