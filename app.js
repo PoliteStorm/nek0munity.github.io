@@ -11,8 +11,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const connectWalletButton = document.getElementById('connectWalletButton');
   const mintButton = document.getElementById('mintButton');
 
-  // Load ABI file using fetch
-  fetch('NekoFrensABI.json')
+  // Load ABI file using fetch from GitHub
+  fetch('https://github.com/PoliteStorm/nek0munity.github.io/blob/main/NekoFrensABI.json')
     .then(response => response.json())
     .then(abi => {
       contractAbi = abi;
