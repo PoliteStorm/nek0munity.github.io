@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
-   const connectWalletButton = document.getElementById("connectWallet");
-   const mintNFTButton = document.getElementById("mintNFT");
+   const connectWallet = document.getElementById("connectWallet");
+   const mintNFT = document.getElementById("mintNFT");
 
    let web3;
 
