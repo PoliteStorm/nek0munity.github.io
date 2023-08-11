@@ -1,14 +1,31 @@
-document.addEventListener('DOMContentLoaded', async () => {
-  const connectWalletButton = document.getElementById('connectWalletButton');
-  const mintButton = document.getElementById('mintButton');
+document.addEventListener("DOMContentLoaded", async () => {
+   const connectWalletButton = document.getElementById("connectWallet");
+   const mintNFTButton = document.getElementById("mintNFT");
 
-  let web3;
-  let contract;
-  let mintCost;
+   let web3;
 
-  // Replace with the ABI of your contract
-  const contractAbi = [
-   {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
+   // Function to connect the wallet
+   async function connectWallet() {
+       if (window.ethereum) {
+           web3 = new Web3(window.ethereum);
+           // Request user's permission to access their accounts
+           await window.ethereum.enable();
+           console.log("Connected to wallet:", web3.eth.defaultAccount);
+       } else {
+           console.error("Web3 not found. Please install MetaMask or use a compatible browser.");
+       }
+   }
+
+   // Function to mint an NFT
+   async function mintNFT() {
+       if (!web3) {
+           console.error("Web3 not connected.");
+           return;
+       }
+
+       const contractAddress = '0xDf8d126474d3aFd2d8082453540014b503bf0012'; // Your contract address on Polygon
+       const contractABI = [
+         {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
         {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},
         {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},
         {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},
@@ -37,83 +54,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         {"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
         {"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},
         {"inputs":[],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}
-  ];
+       
+       ]; // Replace with your contract's ABI
 
-  // Replace with your actual contract address
-  const contractAddress = '0xDf8d126474d3aFd2d8082453540014b503bf0012'; // Paste the contract address here
+       // Configure the Polygon RPC URL and chain ID
+       const polygonRpcUrl = 'https://polygon-rpc.com/'; // Replace with the appropriate RPC URL for the Polygon network
+       const polygonChainId = 137; // Polygon Mainnet chain ID
 
-  async function init() {
-    // Initialize web3 and contract instance here
-    if (window.ethereum) {
-      web3 = new Web3(window.ethereum);
-      try {
-        await window.ethereum.enable();
-        contract = new web3.eth.Contract(contractAbi, contractAddress);
-        mintCost = await contract.methods.mintCost().call();
-        mintButton.disabled = false;
-      } catch (error) {
-        console.error('Error initializing web3 or contract:', error);
-      }
-    }
-  }
+       web3.setProvider(new Web3.providers.HttpProvider(polygonRpcUrl));
 
-  init();
+       const nftContract = new web3.eth.Contract(contractABI, contractAddress);
+       const gasPrice = await web3.eth.getGasPrice();
+       const gasEstimate = await nftContract.methods.mintNFT().estimateGas();
 
-  connectWalletButton.addEventListener('click', async () => {
-    if (!web3) {
-      console.log('Web3 not available.');
-      return;
-    }
+       try {
+           await nftContract.methods.mintNFT().send({
+               from: web3.eth.defaultAccount,
+               gas: gasEstimate,
+               gasPrice: gasPrice
+           });
 
-    try {
-      const accounts = await web3.eth.getAccounts();
-      if (accounts.length === 0) {
-        console.log('No connected accounts.');
-        return;
-      }
+           console.log("NFT minted successfully!");
+       } catch (error) {
+           console.error("Error minting NFT:", error);
+       }
+   }
 
-      console.log('Connected with address:', accounts[0]);
-    } catch (error) {
-      console.error('Error connecting wallet:', error);
-    }
-  });
-
-  mintButton.addEventListener('click', async () => {
-    if (!web3 || !contract) {
-      console.log('Web3 or contract instance not available.');
-      return;
-    }
-
-    const accounts = await web3.eth.getAccounts();
-    if (accounts.length === 0) {
-      console.log('No connected accounts.');
-      return;
-    }
-
-    try {
-      const mintAmount = 1;
-
-      const gasEstimate = await contract.methods.mint(mintAmount).estimateGas({
-        from: accounts[0],
-        value: mintCost
-      });
-
-      const gasPrice = await web3.eth.getGasPrice();
-      const gasFee = gasEstimate * gasPrice;
-
-      const transactionParameters = {
-        from: accounts[0],
-        value: mintCost,
-        gas: gasEstimate,
-        gasPrice: gasPrice
-      };
-
-      await contract.methods.mint(mintAmount).send(transactionParameters);
-
-      console.log('NFTs minted successfully. Gas fee:', web3.utils.fromWei(gasFee.toString(), 'ether'), 'ETH');
-    } catch (error) {
-      console.error('Error minting NFTs:', error);
-    }
-  });
+   connectWalletButton.addEventListener("click", connectWallet);
+   mintNFTButton.addEventListener("click", mintNFT);
 });
-
