@@ -1,7 +1,12 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  const alchemyKey = 'BUUczsUz__eVJKDXm_c4DW5ugPSoGyhf'; // Replace with your Alchemy API key
-  const web3 = new Web3(new Web3.providers.HttpProvider(alchemyKey));
+document.addEventListener('DOMContentLoaded', async () => {
+  const connectWalletButton = document.getElementById('connectWalletButton');
+  const mintButton = document.getElementById('mintButton');
 
+  let web3;
+  let contract;
+  let mintCost;
+
+  // Replace with the ABI of your contract
   const contractAbi = [
    {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
         {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},
@@ -34,89 +39,81 @@ document.addEventListener("DOMContentLoaded", async () => {
         {"inputs":[],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}
   ];
 
-  const contractAddress = '0xDf8d126474d3aFd2d8082453540014b503bf0012'; // Replace with your contract address
+  // Replace with your actual contract address
+  const contractAddress = '0xDf8d126474d3aFd2d8082453540014b503bf0012'; // Paste the contract address here
 
-  const nftContract = new web3.eth.Contract(contractAbi, contractAddress);
-
-  const connectWalletButton = document.getElementById('connectWalletButton');
-  const mintButton = document.getElementById('mintButton');
-
-  let connected = false;
-  let walletConnector = null;
-
-  // Initialize WalletConnect and the app
-  const initApp = () => {
-    walletConnector = new WalletConnect({ bridge: 'https://bridge.walletconnect.org' });
-
-    if (walletConnector.connected) {
-      connected = true;
-      updateMintButtonStatus();
+  async function init() {
+    // Initialize web3 and contract instance here
+    if (window.ethereum) {
+      web3 = new Web3(window.ethereum);
+      try {
+        await window.ethereum.enable();
+        contract = new web3.eth.Contract(contractAbi, contractAddress);
+        mintCost = await contract.methods.mintCost().call();
+        mintButton.disabled = false;
+      } catch (error) {
+        console.error('Error initializing web3 or contract:', error);
+      }
     }
-  };
+  }
 
-  // Connect wallet using WalletConnect
+  init();
+
   connectWalletButton.addEventListener('click', async () => {
-    if (!walletConnector) {
-      await initApp();
+    if (!web3) {
+      console.log('Web3 not available.');
+      return;
     }
 
-    if (!walletConnector.connected) {
-      try {
-        await walletConnector.createSession();
-        connected = true;
-        updateMintButtonStatus();
-      } catch (error) {
-        console.error('Error connecting wallet:', error);
-      }
-    }
-  });
-
-  // Mint NFTs using WalletConnect
-  mintButton.addEventListener('click', async () => {
-    if (connected) {
-      await mintNFTs();
-    }
-  });
-
-  function updateMintButtonStatus() {
-    mintButton.disabled = !connected;
-  }
-
-  async function mintNFTs() {
-    const accounts = await web3.eth.getAccounts();
-    const sender = accounts[0];
-
-    // Estimate gas for the minting transaction
     try {
-      const gas = await nftContract.methods.mintNFTs(1).estimateGas({ from: sender });
-
-      // Send the minting transaction
-      try {
-        const result = await walletConnector.sendTransaction({
-          from: sender,
-          to: contractAddress,
-          data: nftContract.methods.mintNFTs(1).encodeABI(),
-          gas,
-        });
-
-        console.log('Transaction hash:', result.transactionHash);
-        console.log('Receipt:', result);
-
-        // Provide user feedback that the minting was successful
-        alert('NFT minted successfully!');
-      } catch (error) {
-        console.error('Error minting NFTs:', error);
-        // Provide user feedback that the minting failed
-        alert('Error minting NFTs. Please try again.');
+      const accounts = await web3.eth.getAccounts();
+      if (accounts.length === 0) {
+        console.log('No connected accounts.');
+        return;
       }
-    } catch (error) {
-      console.error('Error estimating gas:', error);
-      // Provide user feedback that the gas estimation failed
-      alert('Error estimating gas. Please try again.');
-    }
-  }
 
-  // Update mint button status initially
-  updateMintButtonStatus();
+      console.log('Connected with address:', accounts[0]);
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+    }
+  });
+
+  mintButton.addEventListener('click', async () => {
+    if (!web3 || !contract) {
+      console.log('Web3 or contract instance not available.');
+      return;
+    }
+
+    const accounts = await web3.eth.getAccounts();
+    if (accounts.length === 0) {
+      console.log('No connected accounts.');
+      return;
+    }
+
+    try {
+      const mintAmount = 1;
+
+      const gasEstimate = await contract.methods.mint(mintAmount).estimateGas({
+        from: accounts[0],
+        value: mintCost
+      });
+
+      const gasPrice = await web3.eth.getGasPrice();
+      const gasFee = gasEstimate * gasPrice;
+
+      const transactionParameters = {
+        from: accounts[0],
+        value: mintCost,
+        gas: gasEstimate,
+        gasPrice: gasPrice
+      };
+
+      await contract.methods.mint(mintAmount).send(transactionParameters);
+
+      console.log('NFTs minted successfully. Gas fee:', web3.utils.fromWei(gasFee.toString(), 'ether'), 'ETH');
+    } catch (error) {
+      console.error('Error minting NFTs:', error);
+    }
+  });
 });
 
