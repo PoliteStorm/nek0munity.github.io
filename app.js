@@ -1,4 +1,4 @@
-const web3 = new Web3('<YOUR_INFURA_URL>'); // Replace with your Infura URL or provider
+const web3 = new Web3('BUUczsUz__eVJKDXm_c4DW5ugPSoGyhf'); // Replace with your Infura URL or provider
 
 const contractAbi = require('./NekoFrensABI.json'); // Replace with your ABI file
 const contractAddress = '0xDf8d126474d3aFd2d8082453540014b503bf0012'; // Replace with your contract address
