@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const alchemyKey = 'BUUczsUz__eVJKDXm_c4DW5ugPSoGyhf'; // Replace with your Alchemy API key
   const web3 = new Web3(new Web3.providers.HttpProvider(alchemyKey));
 
-  const contractAbi = require('./NekoFrensABI.json'); // Replace with your ABI file
+  const contractAbi = require('NekoFrensABI.json'); // Replace with your ABI file
   const contractAddress = '0xDf8d126474d3aFd2d8082453540014b503bf0012'; // Replace with your contract address
 
   const nftContract = new web3.eth.Contract(contractAbi, contractAddress);
