@@ -1,52 +1,48 @@
-/* Reset default margin and padding for all elements */
-body, h1, button {
-   margin: 0;
-   padding: 0;
-}
+/* styles.css */
 
-/* Apply a modern font to the entire page */
 body {
-   font-family: Arial, sans-serif;
+    font-family: Arial, sans-serif;
+    background-color: #000;
+    color: #fff;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
-/* Style the container */
 .container {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
-   height: 100vh;
-   background-color: #000;
-   color: #fff;
+    text-align: center;
 }
 
-/* Style the main heading */
-h1 {
-   font-size: 2.5rem;
-   margin-bottom: 20px;
+.logo {
+    width: 150px; /* Adjust width as needed */
+    margin-bottom: 20px;
 }
 
-/* Style the buttons */
+.buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 button {
-   background-color: #fff;
-   color: #000;
-   border: none;
-   border-radius: 5px;
-   padding: 10px 20px;
-   font-size: 1rem;
-   margin: 5px;
-   cursor: pointer;
-   transition: background-color 0.3s, color 0.3s;
+    background-color: #fff;
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 10px;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 button:hover {
-   background-color: #000;
-   color: #fff;
+    background-color: #000;
+    color: #fff;
 }
 
-/* Adjust button styles for smaller screens */
-@media screen and (max-width: 600px) {
-   h1 {
-       font-size: 2rem;
-   }
+button:disabled {
+    background-color: #666;
+    cursor: not-allowed;
 }
