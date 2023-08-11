@@ -1,5 +1,5 @@
 {
-  "name": "nekos-frens-nft-minter",
+  "name": "nekosfrens",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,7 +9,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "web3": "^1.5.2"
+  "devDependencies": {
+    "hardhat": "^2.17.1"
   }
 }
