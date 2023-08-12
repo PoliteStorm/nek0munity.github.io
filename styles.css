@@ -1,39 +1,42 @@
-/* styles.css */
+/* Apply a general reset for styling consistency */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+/* Set a black and white color scheme */
 body {
-    font-family: Arial, sans-serif;
     background-color: #000;
     color: #fff;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    font-family: Arial, sans-serif;
 }
 
+/* Center the container */
 .container {
-    text-align: center;
-}
-
-.logo {
-    width: 150px; /* Adjust width as needed */
-    margin-bottom: 20px;
-}
-
-.buttons {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    height: 100vh;
 }
 
+/* Style the logo */
+.logo {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 20px;
+}
+
+/* Style the buttons */
 button {
     background-color: #fff;
     color: #000;
     border: none;
     padding: 10px 20px;
+    border-radius: 50px; /* Make the buttons round */
+    margin: 5px;
     cursor: pointer;
-    font-size: 16px;
-    margin: 10px;
     transition: background-color 0.3s, color 0.3s;
 }
 
@@ -42,7 +45,8 @@ button:hover {
     color: #fff;
 }
 
-button:disabled {
-    background-color: #666;
+/* Disable the mint button */
+#mintButton:disabled {
+    opacity: 0.5;
     cursor: not-allowed;
 }
