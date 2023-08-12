@@ -5,9 +5,8 @@ let web3;
 let contract;
 let mintCost;
 
-// Replace with the ABI of your contract
 const contractAbi = [
-    {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
+ {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
         {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},
         {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},
         {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},
@@ -38,72 +37,72 @@ const contractAbi = [
         {"inputs":[],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}
 ];
 
-// Replace with your actual contract address
-const contractAddress = '0xDf8d126474d3aFd2d8082453540014b503bf0012'; // Paste the contract address here
+const contractAddress = '0xDf8d126474d3aFd2d8082453540014b503bf0012'; // Replace with your actual contract address
 
 async function init() {
-    if (typeof window.ethereum !== 'undefined') {
-        web3 = new Web3(window.ethereum);
-        try {
-            await window.ethereum.enable();
-            contract = new web3.eth.Contract(contractAbi, contractAddress);
-            mintCost = await contract.methods.mintCost().call();
-            mintButton.disabled = false;
-        } catch (error) {
-            console.error('Error initializing web3 or contract:', error);
-        }
+  if (typeof window.ethereum !== 'undefined') {
+    try {
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      web3 = new Web3(window.ethereum);
+      contract = new web3.eth.Contract(contractAbi, contractAddress);
+      mintCost = await contract.methods.mintCost().call();
+      mintButton.disabled = false;
+    } catch (error) {
+      console.error('Error initializing web3 or contract:', error);
     }
+  } else {
+    console.log('MetaMask not available.');
+  }
 }
 
 init();
 
 connectWalletButton.addEventListener('click', async () => {
-    if (!web3) {
-        console.log('Web3 not available.');
-        return;
-    }
+  if (!web3) {
+    console.log('Web3 not available.');
+    return;
+  }
 
-    try {
-        const accounts = await web3.eth.getAccounts();
-        if (accounts.length === 0) {
-            console.log('No connected accounts.');
-            return;
-        }
-
-        console.log(`Connected with address: ${accounts[0]}`);
-    } catch (error) {
-        console.error('Error connecting wallet:', error);
-    }
-});
-
-mintButton.addEventListener('click', async () => {
-    if (!web3 || !contract) {
-      console.log('Web3 or contract instance not available.');
-      return;
-    }
-  
+  try {
     const accounts = await web3.eth.getAccounts();
     if (accounts.length === 0) {
       console.log('No connected accounts.');
       return;
     }
-  
-    try {
-      const mintAmount = 1;
-  
-      const transactionParameters = {
-        from: accounts[0],
-        value: mintCost,
-        gas: 200000  // You can set a reasonable initial value here
-      };
 
-      // Launch Metamask for transaction approval
-      await contract.methods.mint(mintAmount).send(transactionParameters);
-  
-      console.log('Transaction requested. Please check Metamask for transaction approval.');
-    } catch (error) {
-      console.error('Transaction error:', error);
-    }
+    console.log(`Connected with address: ${accounts[0]}`);
+  } catch (error) {
+    console.error('Error connecting wallet:', error);
+  }
+});
+
+mintButton.addEventListener('click', async () => {
+  if (!web3 || !contract) {
+    console.log('Web3 or contract instance not available.');
+    return;
+  }
+
+  const accounts = await web3.eth.getAccounts();
+  if (accounts.length === 0) {
+    console.log('No connected accounts.');
+    return;
+  }
+
+  try {
+    const mintAmount = 1;
+
+    const transactionParameters = {
+      from: accounts[0],
+      value: mintCost,
+      gas: 200000,
+    };
+
+    await contract.methods.mint(mintAmount).send(transactionParameters);
+
+    console.log('Transaction requested. Please check your wallet for transaction approval.');
+  } catch (error) {
+    console.error('Transaction error:', error);
+  }
 });
 
                 
