@@ -6,7 +6,7 @@ let contract;
 let mintCost;
 
 const contractAbi = [
- {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
+  {"inputs":[],"stateMutability":"nonpayable","type":"constructor"},
         {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},
         {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},
         {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},
@@ -41,15 +41,10 @@ const contractAddress = '0xDf8d126474d3aFd2d8082453540014b503bf0012'; // Replace
 
 async function init() {
   if (typeof window.ethereum !== 'undefined') {
-    try {
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      web3 = new Web3(window.ethereum);
-      contract = new web3.eth.Contract(contractAbi, contractAddress);
-      mintCost = await contract.methods.mintCost().call();
-      mintButton.disabled = false;
-    } catch (error) {
-      console.error('Error initializing web3 or contract:', error);
-    }
+    web3 = new Web3(window.ethereum);
+    contract = new web3.eth.Contract(contractAbi, contractAddress);
+    mintCost = await contract.methods.mintCost().call();
+    mintButton.disabled = true; // Disable the mint button until wallet is connected
   } else {
     console.log('MetaMask not available.');
   }
@@ -64,13 +59,14 @@ connectWalletButton.addEventListener('click', async () => {
   }
 
   try {
-    const accounts = await web3.eth.getAccounts();
+    const accounts = await web3.eth.requestAccounts();
     if (accounts.length === 0) {
       console.log('No connected accounts.');
       return;
     }
 
     console.log(`Connected with address: ${accounts[0]}`);
+    mintButton.disabled = false; // Enable the mint button once wallet is connected
   } catch (error) {
     console.error('Error connecting wallet:', error);
   }
@@ -105,4 +101,3 @@ mintButton.addEventListener('click', async () => {
   }
 });
 
-                
